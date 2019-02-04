@@ -72,8 +72,10 @@ def run_macro(filename):#run the excel macro
 	xlApp = Dispatch("Excel.Application")
 	cwd = os.getcwd()
 	xlApp.Workbooks.Open(cwd + '\\' + filename)
-	xlApp.Visible=1
+	xlApp.Visible=0
 	xlApp.Run("AAHFileMacro")
+	xlApp.Workbooks(1).Close(SaveChanges=1)
+	xlApp.Application.Quit()
 
 current_date=datetime.datetime.today().strftime('%Y%d%m')#get current date for file name
 newFilename = current_date + '.xlsm'
