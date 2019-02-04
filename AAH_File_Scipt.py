@@ -65,14 +65,10 @@ def columns_into_excel(line_list):#function to put the data into excel
 				pass
 			
 			sheet[cell] = line_list[z][i]#sets the value of each cell
-
-	#current_date=datetime.datetime.today().strftime('%Y%d%m')#get current date for file name
-	#newFilename = current_date + '.xlsm'
-	#newFilename = newFilename.replace('-', '')#create the new filename which is the date in format yyyyddmm
 	
 	workbook.save(newFilename)#saves the workbook under a new name
 
-def run_macro(filename):
+def run_macro(filename):#run the excel macro
 	xlApp = Dispatch("Excel.Application")
 	cwd = os.getcwd()
 	xlApp.Workbooks.Open(cwd + '\\' + filename)
@@ -81,7 +77,7 @@ def run_macro(filename):
 
 current_date=datetime.datetime.today().strftime('%Y%d%m')#get current date for file name
 newFilename = current_date + '.xlsm'
-newFilename = newFilename.replace('-', '')#create the new filename which is the date in format yyyyddmm
+newFilename = newFilename.replace('-', '')#create the new filename in format yyyyddmm
 
 columns_into_excel(line_to_columns(file_to_list(filename)))
 run_macro(newFilename)
