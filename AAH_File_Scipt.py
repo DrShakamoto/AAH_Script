@@ -7,10 +7,18 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
+import zipfile
 
 filename = "STKPREAN.FLT"
 
-def file_to_list(filename):#function to place each line from the file into a list
+def file_to_list(filename):#function to convert to .zip and put each line from the file into a list
+
+	if os.path.isfile('PREANZIP.txt'):
+		os.rename('PREANZIP.txt', 'PREAN.zip')#rename the txt file to the zip
+		with zipfile.ZipFile("PREAN.zip","r") as zip_ref:#unzip the file
+			zip_ref.extractall()
+		os.remove('PREAN.zip')#remove the zip file
+
 	file = open(filename,"r") #open the file as read only
 
 	line_list = []#creating a blank list to store each line in 
