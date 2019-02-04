@@ -41,7 +41,7 @@ def line_to_columns(line_list):#function to seperate each line into the correctl
 		
 		string = ''.join(string_list)#joins the list back into a string including added commas
 		column_list = string.split(",")#creates a list containing each column
-		line_list[i] = column_list#replaces the original string stored in the line_list with a second list containing each column
+		line_list[i] = column_list#replaces the original string stored in the line_list with a second list containing each column to create a 2d list
 	
 	return line_list
 
@@ -56,13 +56,18 @@ def columns_into_excel(line_list):#function to put the data into excel
 		for z in range(0, len(line_list)):#loops once for every row
 			row = str(z+1)#gets the row number
 			cell = column + row#stores the cell value as a string
+
+			try:#if the value is a number, convert it to an integer. If not, continue with it as a string. This prevents the "number stored as text" message in excel
+				line_list[z][i] = int(line_list[z][i])
+			except:
+				pass
+			
 			sheet[cell] = line_list[z][i]#sets the value of each cell
 
 	current_date=datetime.datetime.today().strftime('%Y%d%m')#get current date for file name
 	newFilename = current_date + '.xlsm'
-	newFilename = newFilename.replace('-', '')
+	newFilename = newFilename.replace('-', '')#create the new filename which is the date in format yyyyddmm
+
 	workbook.save(newFilename)#saves the workbook under a new name
 
 columns_into_excel(line_to_columns(file_to_list(filename)))
-
-#TODO: Sanitise data types
