@@ -2,6 +2,11 @@ import openpyxl
 import datetime
 import os
 from win32com.client import Dispatch
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 
 filename = "STKPREAN.FLT"
 
@@ -77,9 +82,47 @@ def run_macro(filename):#run the excel macro
 	xlApp.Workbooks(1).Close(SaveChanges=1)
 	xlApp.Application.Quit()
 
+def send_email(filename):
+	sendEmail = input("Would you like to send the spreadsheet to hwright@weldricks.co.uk? 'y' or 'n': ")#check if the user would like to send the email
+	
+	if sendEmail == 'y' or sendEmail == 'Y':
+
+		s = smtplib.SMTP(host='mail.weldricks.co.uk', port=25)#set the mail server and port
+		s.starttls()#start the SMTP session
+
+		msg = MIMEMultipart() #create a message
+
+		#set the parameters of the message:
+		msg['From'] = ""
+		msg['To'] = ""
+		msg['Cc'] = ""
+		msg['Bcc'] = ""
+		msg['Subject'] = "AAH Product File"
+
+		body = "Hi Harry,\n\nPlease find the weekly AAH product spreadsheet attached.\n\nThis message was automatically generated."
+		msg.attach(MIMEText(body, 'plain'))
+
+		attachment = open(filename, 'rb')
+
+		part = MIMEBase('application', 'octet-stream')
+		part.set_payload((attachment).read())
+		encoders.encode_base64(part)
+		part.add_header('Content-Disposition', "attachment; filename= %s" %filename)
+
+		msg.attach(part)
+
+		s.send_message(msg)#send the message
+		del msg#delete local copy of message
+		s.quit()#close the SMTP session
+
+
+	else:
+		input("The spreadsheet has been generated but not sent. Press any key to exit.")
+
 current_date=datetime.datetime.today().strftime('%Y%d%m')#get current date for file name
 newFilename = current_date + '.xlsm'
 newFilename = newFilename.replace('-', '')#create the new filename in format yyyyddmm
 
 columns_into_excel(line_to_columns(file_to_list(filename)))
 run_macro(newFilename)
+send_email(newFilename)
